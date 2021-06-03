@@ -27,6 +27,8 @@ from utils.extract_utils import get_image_blob, save_bbox, save_roi_features_by_
 from utils.progress_bar import ProgressBar
 from models import add_config
 from models.bua.box_regression import BUABoxes
+import pudb
+from tqdm import tqdm
 
 import ray
 from ray.actor import ActorHandle
@@ -212,7 +214,10 @@ def main():
     CONF_THRESH = cfg.MODEL.BUA.EXTRACTOR.CONF_THRESH
 
     # Extract features.
-    imglist = os.listdir(args.image_dir)
+    dirlist = os.listdir(args.image_dir)
+    imglist = []
+    for dir_here in tqdm(dirlist):
+        imglist.extend([dir_here+"/images/scene_cam_00_geometry_preview/"+x for x in os.listdir(args.image_dir+"/"+dir_here+"/images/scene_cam_00_geometry_preview/") if "color" in dir_here+"/images/scene_cam_00_geometry_preview/"+x])
     num_images = len(imglist)
     print('Number of images: {}.'.format(num_images))
 
