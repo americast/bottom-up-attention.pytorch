@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import cv2
 import os
+import pudb
 
 from models.bua.layers.nms import nms
 from models.bua.box_regression import BUABoxes
@@ -108,6 +109,7 @@ def save_roi_features(args, cfg, im_file, im, dataset_dict, boxes, scores, featu
             }
 
     output_file = os.path.join(args.output_dir, im_file.split('.')[0])
+    os.system("mkdir -p "+output_file[:output_file.rfind("/")])
     np.savez_compressed(output_file, x=image_feat, bbox=image_bboxes, num_bbox=len(keep_boxes), image_h=np.size(im, 0), image_w=np.size(im, 1), info=info)
 
 def save_bbox(args, cfg, im_file, im, dataset_dict, boxes, scores):
