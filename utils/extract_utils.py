@@ -88,6 +88,7 @@ def save_roi_features(args, cfg, im_file, im, dataset_dict, boxes, scores, featu
         attr_scores = attr_scores[0]
         image_attrs_conf = np.max(attr_scores[keep_boxes].numpy()[:,1:], axis=1)
         image_attrs = np.argmax(attr_scores[keep_boxes].numpy()[:,1:], axis=1)
+        # pu.db
         info = {
             'image_id': im_file.split('.')[0],
             'image_h': np.size(im, 0),
@@ -97,6 +98,8 @@ def save_roi_features(args, cfg, im_file, im, dataset_dict, boxes, scores, featu
             'objects_conf': image_objects_conf,
             'attrs_id': image_attrs,
             'attrs_conf': image_attrs_conf,
+            'scores': scores[keep_boxes],
+            'attr_scores': attr_scores[keep_boxes]
             }
     else:
         info = {
@@ -105,7 +108,8 @@ def save_roi_features(args, cfg, im_file, im, dataset_dict, boxes, scores, featu
             'image_w': np.size(im, 1),
             'num_boxes': len(keep_boxes),
             'objects_id': image_objects,
-            'objects_conf': image_objects_conf
+            'objects_conf': image_objects_conf,
+            'scores': scores[keep_boxes]
             }
 
     output_file = os.path.join(args.output_dir, im_file.split('.')[0])

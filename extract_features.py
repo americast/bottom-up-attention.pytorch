@@ -214,10 +214,11 @@ def main():
     CONF_THRESH = cfg.MODEL.BUA.EXTRACTOR.CONF_THRESH
 
     # Extract features.
-    dirlist = os.listdir(args.image_dir)
-    imglist = []
-    for dir_here in tqdm(dirlist):
-        imglist.extend([dir_here+"/images/scene_cam_00_geometry_preview/"+x for x in os.listdir(args.image_dir+"/"+dir_here+"/images/scene_cam_00_geometry_preview/") if "color" in dir_here+"/images/scene_cam_00_geometry_preview/"+x])
+    # dirlist = os.listdir(args.image_dir)
+    # imglist = []
+    # for dir_here in tqdm(dirlist):
+    #     imglist.extend([dir_here+"/images/scene_cam_00_geometry_preview/"+x for x in os.listdir(args.image_dir+"/"+dir_here+"/images/scene_cam_00_geometry_preview/") if "color" in dir_here+"/images/scene_cam_00_geometry_preview/"+x])
+    imglist = os.listdir(args.image_dir)
     num_images = len(imglist)
     print('Number of images: {}.'.format(num_images))
 
