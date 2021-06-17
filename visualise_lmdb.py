@@ -8,96 +8,13 @@ import lmdb
 import pudb
 import pickle
 import base64
-import csv
-import sys
-import codecs
-
-TSV_FIELDNAMES = ['scanId', 'viewpointId', 'image_w','image_h', 'vfov', 'features', 'boxes', 
-                  'cls_prob', 'attr_prob', 'featureViewIndex', 'featureHeading', 'featureElevation', 
-                  'viewHeading', 'viewElevation']
-
-csv.field_size_limit(sys.maxsize)
 
 random.seed(0)
 files_match = []
 files = []
-os.system("rm vis_res_pytorch/*")
-files = os.listdir("vis_res_caffe/")
-
-def fix_nulls(s):
-    for line in s:
-        yield line.replace('\0', ' ')
-
-fd = "/srv/flash1/ssinha97/Matterport3DSimulator/img_features/ResNet-101-faster-rcnn-genome.tsv.0"
-rd = csv.DictReader(fix_nulls(open(fd, "rt")), delimiter="\t", fieldnames = TSV_FIELDNAMES)
-
-boxes = []
-boxes_view = []
-imgs = {}
-
-print("\nExtracting...")
-for i, row in enumerate(tqdm(rd)):
-    files_match.append(row["scanId"]+"-"+row["viewpointId"])
-    val_dict = row
-
-    j = val_dict["boxes"]
-    l = np.frombuffer(base64.b64decode(j), dtype=np.float32).reshape((-1, 4))
-    boxes.append(l)
-
-    j = val_dict["featureViewIndex"]
-    l = np.frombuffer(base64.b64decode(j), dtype=np.float32)
-    boxes_view.append(l)
-
-print("\nGenerating...")
-for i, boxes_here in enumerate(tqdm(boxes)):
-    file_here = files_match[i].replace("-","_")
-    for j, idx in enumerate(boxes_view[i]):
-        file_here_idx = file_here+"_"+str(int(idx))
-        if file_here_idx not in imgs:
-            img_0 = cv2.imread("../Matterport3DSimulator/scene_imgs_now_again_0/"+file_here_idx+".png")
-            img_1 = cv2.imread("../Matterport3DSimulator/scene_imgs_now_again_1/"+file_here_idx+".png")
-            img_2 = cv2.imread("../Matterport3DSimulator/scene_imgs_now_again_2/"+file_here_idx+".png")
-            img_3 = cv2.imread("../Matterport3DSimulator/scene_imgs_now_again_3/"+file_here_idx+".png")
-            
-            try:
-                img_0.shape
-                img = img_0
-            except:
-                pass
-
-            try:
-                img_1.shape
-                img = img_1
-            except:
-                pass
-            
-            try:
-                img_2.shape
-                img = img_2
-            except:
-                pass
-
-            try:
-                img_3.shape
-                img = img_3
-            except:
-                pass
-
-            imgs[file_here_idx] = img
-        # else:
-        #     print("already exists")   
-
-        bbox = list(boxes_here[j].astype("int"))
-        imgs[file_here_idx] = cv2.rectangle(imgs[file_here_idx], (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (255,0,0))
-
-print("\nWriting...")
-for i, each in enumerate(imgs):
-    img = imgs[each]
-    cv2.imwrite("vis_res_pytorch/"+each+".png", img)
-    if i == 99: break
+os.system("rm vis_res_caffe/*")
 
 
-"""
 env = lmdb.open("/srv/share3/amoudgil3/Recurrent-VLN-BERT/img_features/matterport-ResNet-101-faster-rcnn-genome.lmdb", readonly=True)
 
 txn = env.begin()
@@ -184,4 +101,3 @@ for i, each in enumerate(imgs):
 #     img_npz = cv2.rectangle(img_npz, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (255,0,0))
 
 
-"""

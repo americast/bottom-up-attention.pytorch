@@ -5,9 +5,8 @@ from copy import deepcopy
 import cv2
 from tqdm import tqdm
 
-files = os.listdir("scene_imgs_now_feats")
-random.shuffle(files)
-files = files[:100]
+files = os.listdir("vis_res_caffe")
+os.system("rm vis_res_pytorch/*")
 
 for f in tqdm(files):
     img_name = f.split(".")[0]+".png"
@@ -42,7 +41,7 @@ for f in tqdm(files):
         pass
     
     img_npz = deepcopy(img)
-    meta_here = np.load("scene_imgs_now_feats/"+f, allow_pickle=True)
+    meta_here = np.load("scene_imgs_now_feats_correct_sans_softmax/"+f.split(".")[0]+".npz", allow_pickle=True)
     bboxes = meta_here["bbox"]
     for bbox in bboxes:
         img_npz = cv2.rectangle(img_npz, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (255,0,0))
