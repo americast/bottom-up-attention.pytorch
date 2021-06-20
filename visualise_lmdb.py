@@ -78,7 +78,7 @@ for i, boxes in enumerate(tqdm(boxes_caffe)):
                 img = img_3
             except:
                 pass
-
+            shape_here = img.shape
             imgs[file_here_idx] = img
         # else:
         #     print("already exists")   
